@@ -53,7 +53,7 @@ args = parser.parse_args()
 
 # select gpu if available
 args.cuda = not args.nocuda and torch.cuda.is_available()
-device = torch.device("cuda:0" if args.cuda else "cpu")
+device = torch.device("cuda:1" if args.cuda else "cpu")
 args.device = device
 
 print('using device: ', device)

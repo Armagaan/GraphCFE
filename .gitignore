@@ -1,0 +1,5 @@
+__pycache__
+.vscode/
+dataset/
+models_save/
+logs/

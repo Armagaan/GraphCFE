@@ -27,7 +27,7 @@ sys.path.append('../')
 font_sz = 28
 
 parser = argparse.ArgumentParser(description='Graph counterfactual explanation generation')
-parser.add_argument('--nocuda', type=int, default=0, help='Disables CUDA training.')
+parser.add_argument('--nocuda', action="store_true", help='Disables CUDA training.')
 parser.add_argument('--batch_size', type=int, default=500, metavar='N',
                     help='input batch size for training (default: 500)')
 parser.add_argument('--num_workers', type=int, default=0, metavar='N')
@@ -53,16 +53,22 @@ parser.add_argument('--lr', type=float, default=1e-3,
 parser.add_argument('--weight_decay', type=float, default=1e-5,
                     help='weight decay')
 
+parser.add_argument('--save_model', action="store_true")
 parser.add_argument('--experiment_type', default='train', choices=['train', 'test', 'baseline'],
                     help='train: train CLEAR model; test: load CLEAR from file; baseline: run a baseline')
+parser.add_argument('--cf_model_path', type=str, default=None)
 parser.add_argument('--baseline_type', default='random', choices=['IST', 'random', 'RM'],
                     help='select baseline type: insert, random perturb, or remove edges')
 
 args = parser.parse_args()
+if args.experiment_type == 'test' and args.cf_model_path is None:
+    print("You're using experiment_type=test.")
+    print("Please provide path to the trained CF model.")
+    exit(1)
 
 # select gpu if available
 args.cuda = not args.nocuda and torch.cuda.is_available()
-device = torch.device("cuda:1" if args.cuda else "cpu")
+device = torch.device("cuda" if args.cuda else "cpu")
 args.device = device
 
 print('using device: ', device)
@@ -664,11 +670,12 @@ def run_clear(args, exp_type):
                             'y_cf': y_cf,
                             'train_loader': train_loader, 'val_loader': val_loader, 'test_loader': test_loader,
                             'exp_i': exp_i,
-                            'dataset': args.dataset, 'metrics': metrics, 'save_model': False, 'variant': variant}
+                            'dataset': args.dataset, 'metrics': metrics, 'save_model': args.save_model, 'variant': variant}
             train(train_params)
         else:
             # test
-            CFE_model_path = model_path + f'weights_graphCFE_{variant}_{args.dataset}_exp' + str(exp_i) +'_epoch'+str(900) + '.pt'
+            # CFE_model_path = model_path + f'weights_graphCFE_{variant}_{args.dataset}_exp' + str(exp_i) +'_epoch'+args.epochs + '.pt'
+            CFE_model_path = args.cf_model_path
             model.load_state_dict(torch.load(CFE_model_path))
             print('CFE generator loaded from: ' + CFE_model_path)
             if exp_type == 'test_small':

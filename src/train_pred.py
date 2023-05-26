@@ -27,7 +27,7 @@ torch.backends.cudnn.enabled = False
 
 
 parser = argparse.ArgumentParser(description='Graph counterfactual explanation generation')
-parser.add_argument('--nocuda', type=int, default=0, help='Disables CUDA training.')
+parser.add_argument('--nocuda', action="store_true", help='Disables CUDA training.')
 parser.add_argument('--batch_size', type=int, default=5000, metavar='N',
                     help='input batch size for training (default: 500)')  # community: 500， ogbg: 5000
 parser.add_argument('--num_workers', type=int, default=0, metavar='N')
@@ -53,7 +53,7 @@ args = parser.parse_args()
 
 # select gpu if available
 args.cuda = not args.nocuda and torch.cuda.is_available()
-device = torch.device("cuda:1" if args.cuda else "cpu")
+device = torch.device("cuda" if args.cuda else "cpu")
 args.device = device
 
 print('using device: ', device)

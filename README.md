@@ -3,7 +3,7 @@
 Code for the NeurIPS 2022 paper [*CLEAR: Generative Counterfactual Explanations
 on Graphs*.](https://openreview.net/pdf?id=YR-s5leIvh).
 
-<span style="color: cyan;">Lines in cyan were added by Armagaan.</span>
+<span style="color: cyan;">Lines in cyan were added by [Armagaan](https://github.com/Armagaan).</span>
 
 ## Environment
 ```
@@ -21,7 +21,7 @@ Torch-geometric 1.7.2
 
 ## Run Experiment
 ### Step 1:  Training a graph prediction model
-- <span style="color: cyan;">cuda device is hardcoded in `train_pred.py` (line 55), `models.py` (lines 10, 200), and `main.py` (line 65). Change according to your need.</span>
+- <span style="color: cyan;">The authors have hardcoded cuda in `train_pred.py, models.py, main.py`. Hence, the code cannot run on CPU.</span>
 - <span style="color: cyan;">Create a directory named `models_save/prediction` in the repo's home directory.</span>
 - Train a graph prediction model (i.e., the model which needs explanation). The trained prediction models used in this paper can be directly loaded from ```./model_save/```.
 - If you want to train them from scratch, run the following command (here we use the dataset *imdb_m* as an example):
@@ -32,7 +32,7 @@ Or you can also use any other graph prediction models instead.
 
 ### Step 2: Generating counterfactual explanations
 ```
-python main.py --dataset imdb_m --experiment_type train
+python main.py --dataset imdb_m --experiment_type train --save_model
 ```
 Here, when ```experiment_type``` is set to *train* or *test*, the model CLEAR will be trained or loaded from a saved file. When it is set to *baseline*, you can run the random perturbation based baselines (INSERT, REMOVE, RANDOM) by setting ```baseline_type```.
 
